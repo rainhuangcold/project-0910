@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover">
+  <meta name="theme-color" content="#080709">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="PROJECT 0910 — 一部只為小寶播放的記憶電影。">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23080709'/%3E%3Cpath d='M32 49S12 38 12 23c0-10 13-14 20-4 7-10 20-6 20 4 0 15-20 26-20 26Z' fill='%23c94c63'/%3E%3C/svg%3E">
+  <title>PROJECT 0910</title>
+  <style>
+    :root{--black:#080709;--wine:#2b0f18;--red:#c94c63;--cream:#f3eee7;--silver:#c9c3c7;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;--serif:"Songti TC","Noto Serif TC",serif;--sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--black);color:var(--cream);font-family:var(--sans);overscroll-behavior:none}button,input{font:inherit}button{color:inherit;touch-action:manipulation}.grain{position:fixed;inset:-100%;z-index:90;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");animation:grain .65s steps(2) infinite}@keyframes grain{0%{transform:translate(0)}25%{transform:translate(3%,-2%)}50%{transform:translate(-2%,4%)}75%{transform:translate(4%,2%)}100%{transform:translate(-3%,-4%)}}
+    .kicker{font:600 .68rem/1.4 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:#d5abb4}.display{font:600 clamp(2.35rem,10.5vw,5.6rem)/1.04 var(--serif);letter-spacing:-.055em;margin:.5rem 0}.copy{font-size:clamp(1rem,3.9vw,1.18rem);line-height:1.78;letter-spacing:.01em;color:#e3dce0;margin:.55rem 0}.quiet{color:#9d949a}.gesture{border:0;background:none;padding:10px 0;font:600 .72rem var(--mono);letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid #ffffff63;cursor:pointer}.gesture:disabled{opacity:.3}.tap-hint{position:absolute;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));text-align:center;font:500 .64rem var(--mono);letter-spacing:.16em;color:#b5abb1;animation:breathe 2s ease-in-out infinite}@keyframes breathe{50%{opacity:.35}}
+    #lock{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 24%,#32121e 0,transparent 34%),var(--black);display:grid;place-items:center;padding:28px;transition:opacity .9s,transform .9s}.lock-inner{width:min(100%,390px);text-align:center}.lock-mark{font:600 .7rem var(--mono);letter-spacing:.22em;color:#c8bfc4}.lock-title{font:600 clamp(3.3rem,17vw,5.7rem)/.88 var(--serif);letter-spacing:-.07em;margin:20px 0 10px}.code-display{display:flex;justify-content:center;gap:15px;margin:30px 0}.code-display i{width:34px;height:45px;border-bottom:1px solid #75636d;font:500 1.7rem/42px var(--mono);font-style:normal}.code-display i.filled{border-color:#e79aac;color:#fff;text-shadow:0 0 18px #d85d75}.keypad{display:grid;grid-template-columns:repeat(3,66px);justify-content:center;gap:10px}.keypad button{width:66px;height:58px;border:1px solid #342a30;background:#151116;border-radius:50%;font:400 1.05rem var(--mono);cursor:pointer}.keypad button:active{background:#4a1c2b;transform:scale(.94)}.keypad .zero{grid-column:2}.lock-error{height:22px;margin-top:15px;font:.7rem var(--mono);color:#e88da0;letter-spacing:.08em}
+    #prologue{position:fixed;inset:0;z-index:70;display:none;background:#0a080b;opacity:1;transition:opacity .78s ease}.prologue-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%;filter:blur(20px) brightness(.4) saturate(.72);transform:scale(1.13);transition:filter 1.35s ease,transform 1.6s cubic-bezier(.2,.8,.2,1)}.prologue-photo.focus{filter:blur(11px) brightness(.5) saturate(.86);transform:scale(1.075)}.prologue-shade{position:absolute;inset:0;background:linear-gradient(180deg,#08070922 0,#08070918 42%,#080709e8 88%,#080709 100%)}.prologue-copy{position:absolute;z-index:2;left:24px;right:24px;bottom:calc(42px + env(safe-area-inset-bottom));max-width:640px}.start-film{min-height:44px;margin-top:22px;border:0;background:none;padding:12px 0;color:#fff;font:600 .78rem var(--mono);letter-spacing:.15em;border-bottom:1px solid #d9c9d0;cursor:pointer}
+    #film{position:fixed;inset:0;display:none;background:var(--black)}.scene{position:absolute;inset:0;opacity:0;pointer-events:none;overflow:hidden;transition:opacity .8s}.scene.active{opacity:1;pointer-events:auto}.scene-body{position:relative;width:min(100%,1100px);height:100%;margin:auto;padding:calc(32px + env(safe-area-inset-top)) 22px calc(58px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:center}.corner-mark{position:fixed;z-index:55;right:8px;top:calc(6px + env(safe-area-inset-top));min-width:52px;height:44px;padding:0 9px;border:0;background:none;color:#d8cbd1;font:600 .68rem var(--mono);letter-spacing:.16em;cursor:pointer}.back-control,.sound-control{position:fixed;z-index:55;bottom:calc(12px + env(safe-area-inset-bottom));width:44px;height:44px;border:0;background:#0a080b99;color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:50%;cursor:pointer}.back-control{left:14px}.sound-control{left:66px}.back-control[hidden]{display:none}.sound-control:after{content:"";position:absolute;width:5px;height:5px;border-radius:50%;background:var(--red);right:5px;top:5px;box-shadow:0 0 8px var(--red)}.story-progress{position:fixed;z-index:56;left:0;right:0;top:0;height:2px;background:#ffffff0c;pointer-events:none}.story-progress i{display:block;width:11.111%;height:100%;background:linear-gradient(90deg,#762338,var(--red));box-shadow:0 0 10px #c94c6370;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+    .wipe{position:fixed;inset:0;z-index:65;pointer-events:none;display:grid;grid-template-rows:1fr 1fr}.wipe:before,.wipe:after{content:"";background:#0b090c;transform:scaleY(0);transition:transform .38s cubic-bezier(.76,0,.24,1)}.wipe:before{transform-origin:top}.wipe:after{transform-origin:bottom}.wipe.on:before,.wipe.on:after{transform:scaleY(1)}.burn{position:fixed;inset:0;z-index:66;pointer-events:none;opacity:0;background:radial-gradient(circle at 30% 60%,#fff8 0,#e17a5e88 7%,#7f193488 17%,transparent 42%)}.wipe.on+.burn{animation:burn .7s ease-out}@keyframes burn{30%{opacity:.7}100%{opacity:0}}
+    .her-bg{position:absolute;inset:-5%;width:110%;height:110%;object-fit:cover;filter:blur(24px) brightness(.35) saturate(.8);transition:1s}.portrait-wrap{position:relative;width:min(72vw,420px);height:min(60vh,600px);margin:auto}.portrait-shadow{position:absolute;inset:6% -5% -3%;background:#5c2635;filter:blur(45px);opacity:.38}.hero-portrait{position:relative;width:100%;height:100%;object-fit:cover;box-shadow:0 28px 90px #000;border:1px solid #ffffff1f;transform:translateY(0) rotate(-1deg);animation:photoEnter .9s cubic-bezier(.2,.8,.2,1)}@keyframes photoEnter{from{opacity:0;transform:translateY(28px) rotate(2deg) scale(.96)}}.portrait-caption{position:absolute;left:0;right:0;bottom:9%;padding:70px 16px 14px;background:linear-gradient(transparent,#09070ad9);font:500 clamp(1.15rem,4.8vw,1.6rem)/1.6 var(--serif);text-shadow:0 2px 20px #000}.scene-done{display:none;position:relative;z-index:20;margin-top:12px;align-self:flex-end;max-width:calc(100vw - 130px);white-space:nowrap}.scene-done.show{display:block;animation:fade .8s both}@keyframes fade{from{opacity:0}to{opacity:1}}
+    .grad-stage{position:relative;height:66vh;margin-top:14px}.polaroid{position:absolute;width:min(67vw,360px);height:72%;left:50%;top:48%;padding:9px 9px 48px;background:#eee9e2;box-shadow:0 22px 65px #0009;transform:translate(-50%,-50%) rotate(var(--r));animation:drop .8s cubic-bezier(.18,.9,.25,1.2) both}.polaroid img{width:100%;height:100%;object-fit:cover}.polaroid span{position:absolute;bottom:14px;left:14px;color:#342d31;font:600 .67rem var(--mono);letter-spacing:.08em}@keyframes drop{from{opacity:0;transform:translate(-50%,-65%) rotate(0) scale(.86)}}.grad-line{position:absolute;z-index:8;left:0;right:0;bottom:1%;text-align:center;font:500 clamp(1.05rem,4.3vw,1.4rem)/1.6 var(--serif);text-shadow:0 3px 18px #000;background:linear-gradient(transparent,#080709 55%);padding:50px 8px 8px}
+    .military-stage{position:relative;width:100%;height:69vh;overflow:hidden}.military-image{width:100%;height:100%;object-fit:cover;filter:saturate(.76);transition:opacity .5s,transform 1.2s}.military-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,#080709 92%)}.military-copy{position:absolute;left:16px;right:16px;bottom:22px;z-index:2}.military-copy p{font:500 clamp(1rem,4.2vw,1.32rem)/1.65 var(--serif);margin:.4rem 0}.envelope{display:none;position:absolute;z-index:5;left:50%;top:44%;width:min(72vw,330px);height:195px;background:#d7b0bb;transform:translate(-50%,-50%) rotate(-2deg);box-shadow:0 25px 80px #000;border:0;cursor:pointer}.envelope:before{content:"";position:absolute;inset:0;clip-path:polygon(0 0,50% 58%,100% 0);background:#e4c5cd}.envelope span{position:absolute;left:0;right:0;bottom:28px;color:#3f2932;font:600 .72rem var(--mono);letter-spacing:.13em}.envelope.show{display:block;animation:drop .8s both}
+    .military-next-show{display:block!important;animation:fade .8s both}
+    .chaos{position:relative;height:68vh}.float-photo{position:absolute;width:31%;height:38%;padding:0;border:5px solid #ede7e0;background:#eee;box-shadow:0 18px 45px #0008;transform:rotate(var(--r));cursor:pointer;transition:.55s cubic-bezier(.2,.8,.2,1);animation:floatIn .8s both;animation-delay:var(--d)}.float-photo img{width:100%;height:100%;object-fit:cover}.float-photo:nth-child(1){left:1%;top:3%}.float-photo:nth-child(2){left:35%;top:0}.float-photo:nth-child(3){right:1%;top:7%}.float-photo:nth-child(4){left:3%;bottom:5%}.float-photo:nth-child(5){left:36%;bottom:1%}.float-photo:nth-child(6){right:1%;bottom:7%}@keyframes floatIn{from{opacity:0;transform:translateY(30px) rotate(0)}}.float-photo.focus{z-index:9;left:50%;top:47%;width:min(72vw,390px);height:72%;transform:translate(-50%,-50%) rotate(0)}.chaos-caption{position:absolute;z-index:12;left:12px;right:12px;bottom:0;text-align:center;font:500 1rem/1.55 var(--serif);text-shadow:0 2px 14px #000;background:#080709dd;padding:12px;opacity:0;transition:.35s}.chaos-caption.show{opacity:1}
+    .reel-scene{justify-content:flex-start;padding-left:0;padding-right:0}.reel-head{width:100%;padding:3.4vh 22px 12px;text-align:center;align-self:center}.reel{width:100%;display:flex;align-items:center;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px calc((100vw - min(76vw,360px))/2) 30px;scroll-padding-inline:calc((100vw - min(76vw,360px))/2);scrollbar-width:none;perspective:900px}.reel::-webkit-scrollbar{display:none}.reel figure{flex:0 0 min(76vw,360px);height:min(52vh,560px);margin:0;scroll-snap-align:center;position:relative;overflow:hidden;background:#19151a;border-top:14px solid #080709;border-bottom:14px solid #080709;box-shadow:0 24px 60px #0008;opacity:.42;transform:scale(.91);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.8,.2,1)}.reel figure.current{opacity:1;transform:scale(1)}.reel figure:before,.reel figure:after{content:"";position:absolute;z-index:3;left:0;right:0;height:9px;background:repeating-linear-gradient(90deg,#d9d1d21c 0 10px,transparent 10px 20px)}.reel figure:before{top:0}.reel figure:after{bottom:0}.reel img{width:100%;height:100%;object-fit:cover}.reel figcaption{position:absolute;z-index:4;left:0;right:0;bottom:0;padding:72px 18px 17px;background:linear-gradient(transparent,#09070ae9);font:500 .98rem/1.55 var(--serif)}.reel-next{position:absolute;right:22px;bottom:calc(54px + env(safe-area-inset-bottom))}
+    .core{position:relative;width:min(76vw,440px);aspect-ratio:1;margin:auto;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#9d3c5238 0,#42172422 27%,transparent 65%);border:1px solid #b2526835;box-shadow:0 0 90px #741f3433}.core:before,.core:after{content:"";position:absolute;border:1px solid #ffffff1d;border-radius:50%;inset:12%;animation:orbit 12s linear infinite}.core:after{inset:27%;animation-direction:reverse;animation-duration:8s}.core-photo{width:54%;aspect-ratio:1;height:auto;object-fit:cover;border-radius:50%;box-shadow:0 20px 55px #000;z-index:2;transition:.6s}@keyframes orbit{to{transform:rotate(360deg)}}.core-caption{text-align:center;min-height:84px;font:500 clamp(1.05rem,4.2vw,1.35rem)/1.65 var(--serif);padding:8px 12px}
+    .bugu-scene{background:radial-gradient(circle at 50% 40%,#211823 0,#080709 58%)}.starfield{position:absolute;inset:0;background-image:radial-gradient(#fff 0 1px,transparent 1px),radial-gradient(#d9b877 0 1px,transparent 1px);background-size:71px 71px,113px 113px;background-position:3px 4px,17px 29px;opacity:.18}.bugu-star{width:72px;height:72px;border:0;background:none;color:#f4d698;font-size:2rem;text-shadow:0 0 20px #e5bc6a;animation:breathe 2s infinite;cursor:pointer}.bugu-memory{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:1.2s}.bugu-memory.show{opacity:1;pointer-events:auto}.bugu-photo{width:min(65vw,330px);aspect-ratio:1;border-radius:50%;object-fit:cover;box-shadow:0 0 90px #ddb8722e}.bugu-text{text-align:center;max-width:560px;margin:18px auto 0;font:500 clamp(1rem,4vw,1.25rem)/1.7 var(--serif)}
+    .distance{background:radial-gradient(circle at 50% 45%,#34121f 0,#080709 55%)}.distance-ui{margin:36px 0 22px}.place-row{display:flex;align-items:center;justify-content:space-between;font:600 .68rem var(--mono);letter-spacing:.14em}.place-target{min-height:44px;margin:-12px -12px -12px 0;padding:12px;border:0;background:none;font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer}.connection{height:64px;position:relative;margin:8px 0}.connection:before{content:"";position:absolute;left:18px;right:18px;top:31px;height:1px;background:#68545d}.connect-fill{position:absolute;left:18px;top:30px;height:3px;width:0;background:#e28396;box-shadow:0 0 15px #df647c}.drag-node{position:absolute;left:0;top:10px;width:44px;height:44px;border-radius:50%;border:1px solid #e1bac3;background:#351620;box-shadow:0 0 26px #c94c6375;touch-action:none}.distance-words{display:none;opacity:0;transform:translateY(16px)}.distance-words.show{display:block;animation:wordIn 1s both}.distance-words p{font:500 clamp(.98rem,3.9vw,1.16rem)/1.72 var(--serif);color:#eee5e8;margin:0 0 1.15rem}.distance.reading .scene-body{justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-top:calc(64px + env(safe-area-inset-top));padding-bottom:calc(92px + env(safe-area-inset-bottom))}.distance.reading .distance-ui{margin:18px 0 12px}.distance.reading #distanceDone{margin:8px 0 22px;min-height:44px}
+    .final-scene{background:#050405}.final-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.27;filter:saturate(.68);transition:opacity 1s}.final-shade{position:absolute;inset:0;background:linear-gradient(90deg,#050405e8,#05040555),linear-gradient(0deg,#050405 0,transparent 46%);pointer-events:none}.final-words{position:relative;z-index:2;width:min(100%,650px);padding-bottom:18px}.final-line{display:none;font:500 clamp(1.08rem,4.7vw,1.6rem)/1.65 var(--serif);margin:0 0 18px}.final-line.show{display:block;animation:wordIn 1s both}@keyframes wordIn{from{opacity:0;filter:blur(8px);transform:translateY(10px)}to{opacity:1;filter:blur(0);transform:none}}.final-answer{display:none}.final-answer.show{display:block;animation:wordIn 1.2s both}.final-answer h2{font:600 clamp(2.25rem,10vw,5rem)/1.12 var(--serif);letter-spacing:-.055em;margin:.5rem 0 1rem}.final-answer .copy{font-size:clamp(.98rem,3.8vw,1.1rem);line-height:1.76}.heart-complete{width:72px;height:72px;border:1px solid #c98b98;border-radius:50%;background:#241019;color:#efa2b1;font-size:1.8rem;box-shadow:0 0 40px #c94c6344}.signature{font:500 1.05rem var(--serif);color:#d9a6b1;margin-top:18px}.final-scene.reading .scene-body{justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-top:calc(72px + env(safe-area-inset-top));padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+    #chapters{position:fixed;inset:0;z-index:80;display:none;background:#080709f5;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:calc(74px + env(safe-area-inset-top)) 24px 30px}.chapter-list{width:min(100%,520px);margin:auto}.chapter-list h2{font:600 2.4rem var(--serif);margin:0 0 20px}.chapter-list button{display:block;width:100%;min-height:44px;padding:13px 0;border:0;border-bottom:1px solid #ffffff18;background:none;text-align:left;font:500 .85rem var(--mono);letter-spacing:.09em}.chapter-list button:disabled{opacity:.25}.chapter-close{position:absolute;right:10px;top:calc(8px + env(safe-area-inset-top));width:44px;height:44px;border:0;background:none;font-size:1.8rem}
+    .gesture{min-height:44px}.fun-progress{position:absolute;z-index:11;left:50%;bottom:calc(48px + env(safe-area-inset-bottom));display:flex;gap:7px;transform:translateX(-50%);pointer-events:none}.fun-progress i{width:5px;height:5px;border-radius:50%;background:#ffffff35;box-shadow:0 0 0 1px #ffffff10;transition:.35s}.fun-progress i.seen{background:#e28396;box-shadow:0 0 10px #df647c}
+    button:focus-visible{outline:2px solid #f0a0b1;outline-offset:3px}
+    @supports(height:100dvh){html,body,#lock,#prologue,#film{height:100dvh}.scene{height:100dvh}}
+    @media(min-width:760px){.prologue-copy{left:8vw}.scene-body{padding-left:7vw;padding-right:7vw}.portrait-wrap{height:68vh}.chaos{width:min(760px,80vw);margin:auto}.float-photo{width:27%}.reel{gap:24px;padding-left:calc((100vw - min(34vw,360px))/2);padding-right:calc((100vw - min(34vw,360px))/2);scroll-padding-inline:calc((100vw - min(34vw,360px))/2)}.reel figure{flex-basis:min(34vw,360px)}.military-stage{width:min(720px,75vw);margin:auto}.grad-stage{width:min(700px,75vw);margin:auto}.final-shade{background:linear-gradient(90deg,#050405f2 0,#05040599 50%,transparent),linear-gradient(0deg,#050405 0,transparent 46%)}}
+    @media(max-height:700px){.display{font-size:2.25rem}.copy{font-size:.92rem;line-height:1.55}.scene-body{padding-top:46px;padding-bottom:45px}.portrait-wrap{height:62vh}.grad-stage{height:64vh}.military-stage{height:65vh}.chaos{height:65vh}.reel-head{padding-top:0}.reel figure{height:51vh}.core{width:min(60vh,330px)}.core-caption{font-size:.93rem;min-height:65px}.bugu-photo{width:min(52vh,260px)}.bugu-text{font-size:.9rem;line-height:1.5}.distance-ui{margin:15px 0}.distance-words p{font-size:.9rem;line-height:1.5}.final-line{font-size:1.03rem;line-height:1.5}}
+    /* iPhone 15 Pro（393 × 852 CSS px）與相近尺寸最佳化 */
+    @media(max-width:430px) and (min-height:780px){.scene-body{padding-left:20px;padding-right:20px}.display{font-size:clamp(2.3rem,10.2vw,2.7rem)}.portrait-wrap{width:76vw;height:62vh}.grad-stage{height:67vh}.military-stage{height:67vh}.chaos{height:65vh}.reel-head{padding-top:2.4vh}.reel figure{height:54vh}.core{width:min(78vw,340px)}.bugu-photo{width:min(68vw,292px)}.distance:not(.reading) .scene-body{padding-top:calc(52px + env(safe-area-inset-top));padding-bottom:calc(72px + env(safe-area-inset-bottom))}.final-line{font-size:1.12rem}.final-answer h2{font-size:2.35rem}}
+    @media(orientation:landscape) and (max-height:500px){.scene-body{padding-top:36px;padding-bottom:44px}.display{font-size:2rem}.portrait-wrap{width:min(38vw,300px);height:68vh}.grad-stage,.military-stage,.chaos{height:68vh}.distance.reading .scene-body,.final-scene.reading .scene-body{padding-top:42px}.distance-words p,.final-answer .copy{font-size:.88rem;line-height:1.5}}
+    /* 文字支援直接換行：TEXT 區塊裡按 Enter 即可 */
+    .lock-title,.display,.copy,.tap-hint,.portrait-caption,.grad-line,.military-copy p,.chaos-caption,.reel figcaption,.core-caption,.bugu-text,.distance-words p,.final-line,.final-answer h2,.signature{white-space:pre-line}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+  <audio id="music" src="media/photograph-piano.mp3" preload="metadata" loop></audio>
+  <section id="lock">
+    <div class="lock-inner">
+      <div class="lock-mark">OUR PRIVATE ARCHIVE / ACCESS REQUIRED</div>
+      <div class="lock-title">NUO<br>&<br>YANG</div>
+      <div class="code-display"><i></i><i></i><i></i><i></i></div>
+      <div class="keypad" aria-label="輸入紀念日密碼">
+        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button><button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button><button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button><button class="zero" data-key="0">0</button>
+      </div>
+      <div class="lock-error" id="lockError">THE DAY OUR STORY BEGAN</div>
+    </div>
+  </section>
+
+  <section id="prologue">
+    <img class="prologue-photo" id="prologuePhoto" src="media/IMG_0017.webp" alt="小寶在窗邊">
+    <div class="prologue-shade"></div>
+    <div class="prologue-copy">
+      <div class="kicker">A MEMORY FILM FOR My Girl</div>
+      <h1 class="display">戴上耳機</h1>
+      <p class="copy">接下來播放的，是我們一起走過的一整年</p>
+      <button class="start-film" id="begin">開始播放回憶　→</button>
+    </div>
+  </section>
+
+  <main id="film">
+    <div class="story-progress" aria-hidden="true"><i id="storyProgress"></i></div>
+    <button class="corner-mark" id="corner" aria-label="開啟回憶索引">0910</button>
+    <button class="back-control" id="back" hidden aria-label="上一幕">←</button>
+    <button class="sound-control" id="sound" aria-label="暫停或播放音樂">♫</button>
+    <div class="wipe" id="wipe"></div><div class="burn"></div>
+
+    <section class="scene" data-scene="her">
+      <img class="her-bg" id="herBg" src="media/IMG_0015.webp" alt="">
+      <div class="scene-body">
+        <div class="portrait-wrap" id="portraitTap"><div class="portrait-shadow"></div><img class="hero-portrait" id="herPhoto" src="media/IMG_0015.webp" alt="我眼中的小寶"><div class="portrait-caption" id="herCaption">如果心動有最短路徑<br>大概就是妳的笑容</div></div>
+        <button class="gesture scene-done" id="herDone">繼續播放　→</button><div class="tap-hint" id="herHint">輕觸照片，讀取我眼中的妳</div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="graduation">
+      <div class="scene-body"><div class="kicker">THE DAY I GRADUATED</div><h2 class="display">重要的終點，<br>妳也在。</h2><div class="grad-stage" id="gradStage"><div class="grad-line" id="gradLine">那天站在畢業的終點，我第一個想分享的人，還是妳。</div></div><button class="gesture scene-done" id="gradDone">往下一段　→</button><div class="tap-hint" id="gradHint">輕觸空白處，放入下一張照片</div></div>
+    </section>
+
+    <section class="scene" data-scene="military">
+      <div class="scene-body"><div class="kicker">THE DAYS WE MADE IT THROUGH</div><div class="military-stage" id="militaryStage"><img class="military-image" id="militaryImg" src="media/IMG_9998.webp" alt="入伍前一天剃頭"><div class="military-overlay"></div><div class="military-copy"><div class="kicker" id="militaryLabel">BEFORE ENLISTMENT</div><p id="militaryText">進去前一天，是妳親手幫我把頭髮剃掉。那時候我裝得沒什麼，其實心裡最捨不得的就是妳。</p></div><button class="envelope" id="envelope"><span>OPEN ONE LETTER</span></button></div><button class="gesture" id="militaryNext" style="margin-top:14px;display:none">看看她留了什麼　→</button><button class="gesture scene-done" id="militaryDone">把妳的陪伴收好　→</button><div class="tap-hint" id="militaryHint">繼續走進下一段日子</div></div>
+    </section>
+
+    <section class="scene" data-scene="fun">
+      <div class="scene-body"><div class="kicker">HER UNEXPECTED PARAMETERS</div><h2 class="display">妳讓生活，<br>一直很好玩。</h2><div class="chaos" id="chaos"></div><div class="chaos-caption" id="chaosCaption"></div><div class="fun-progress" id="funProgress" aria-hidden="true"></div><button class="gesture scene-done" id="funDone">分析完成　→</button><div class="tap-hint">點開散落的照片</div></div>
+    </section>
+
+    <section class="scene" data-scene="daily">
+      <div class="scene-body reel-scene"><div class="reel-head"><div class="kicker">ORDINARY DAYS / FAVORITE MEMORIES</div><h2 class="display">日子很普通，<br>因為有妳才值得收藏。</h2></div><div class="reel" id="reel"></div><button class="gesture reel-next" id="dailyDone">收好這卷底片　→</button></div>
+    </section>
+
+    <section class="scene" data-scene="tech">
+      <div class="scene-body"><div class="kicker">PLAYER TWO / CONNECTION TEST</div><h2 class="display">我的科技小宇宙，<br>一直有妳。</h2><div class="core" id="core"><img class="core-photo" id="corePhoto" src="media/IMG_5678.webp" alt="一起研究科技"></div><div class="core-caption" id="coreCaption">我一直以為，我喜歡的是研究新東西。</div><button class="gesture scene-done" id="techDone">儲存這段時間　→</button><div class="tap-hint" id="coreHint">輕觸核心，讀取下一筆記憶</div></div>
+    </section>
+
+    <section class="scene bugu-scene" data-scene="bugu">
+      <div class="starfield"></div><div class="scene-body" style="text-align:center;align-items:center"><div id="starIntro"><div class="kicker">ONE SMALL STAR</div><h2 class="display">有一個名字，<br>我們一起想念。</h2><button class="bugu-star" id="buguStar" aria-label="點亮布勾的星星">✦</button><div class="tap-hint">點亮這顆小星星</div></div><div class="bugu-memory" id="buguMemory"><div><img class="bugu-photo" src="media/IMG_0252.webp" alt="布勾"><div class="bugu-text">牠陪我們走過一小段路，也讓「我們」這兩個字，多了一個共同想念的名字。<br><br>謝謝妳和我一起愛過牠。因為是我們一起記得，所以牠從來沒有真的消失。</div><button class="gesture" id="buguDone" style="margin-top:20px">把這顆星星留在這裡　→</button></div></div></div>
+    </section>
+
+    <section class="scene distance" data-scene="distance">
+      <div class="scene-body"><div class="kicker">TAIWAN / AUSTRALIA</div><h2 class="display">明年，距離會變遠。<br>但我們不會。</h2><div class="distance-ui"><div class="place-row"><span>TAIWAN</span><button class="place-target" id="connectTarget" aria-label="直接連線到澳洲">AUSTRALIA</button></div><div class="connection" id="connection"><i class="connect-fill" id="connectFill"></i><button class="drag-node" id="dragNode" aria-label="把訊號拖到澳洲"></button></div></div><div class="distance-words" id="distanceWords"><button class="gesture" id="distanceDone">讀取最後一封信　→</button></div><div class="tap-hint" id="distanceHint">把左邊的訊號拖到澳洲，或直接點擊澳洲</div></div>
+    </section>
+
+    <section class="scene final-scene" data-scene="final">
+      <img class="final-bg" id="finalBg" src="media/IMG_0021.webp" alt="小寶比出半顆愛心"><div class="final-shade"></div><div class="scene-body"><div class="final-words" id="finalWords"><div class="kicker">FINAL OUTPUT / FOR 小寶</div><div class="final-answer" id="finalAnswer"><h2>是我們又一起，<br>走過了一年。</h2><button class="heart-complete" id="heartComplete">♡</button><p class="copy">小寶，週年快樂。<br>下一年的回憶，我也想繼續和妳一起製造。</p><div class="signature">— 永遠想走向妳的羊小寶</div><div class="kicker" style="margin-top:22px">PROJECT 0910 · TO BE CONTINUED</div></div></div><div class="tap-hint" id="finalHint">輕觸畫面，讀下一句</div></div>
+    </section>
+  </main>
+
+  <aside id="chapters"><button class="chapter-close" id="chapterClose" aria-label="關閉回憶索引">×</button><div class="chapter-list"><div class="kicker">MEMORY INDEX</div><h2>想重看哪一段？</h2><div id="chapterButtons"></div></div></aside>
+
+  <script>
+    const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+
+    /* =========================================================
+       ✦ 文字編輯區（以後只改這裡就好）
+       ---------------------------------------------------------
+       1. 想換行：直接在反引號 ` ` 裡按 Enter。
+       2. 不要刪掉逗號、冒號、括號、反引號。
+       3. 照片檔名也集中在各 memories / items 裡，功能不用改。
+       ========================================================= */
+    const TEXT = {
+      lock: {
+        mark: `OUR PRIVATE ARCHIVE / ACCESS REQUIRED`,
+        title: `NUO
+&
+YANG`,
+        hint: `THE DAY OUR STORY BEGAN`,
+        wrong: `ACCESS DENIED · 再想想我們最重要的日期`
+      },
+
+      prologue: {
+        kicker: `A MEMORY FILM FOR My Girl`,
+        title: `戴上耳機`,
+        copy: `接下來播放的，是我們一起走過的一整年`,
+        begin: `開始播放回憶　→`
+      },
+
+      her: {
+        initialCaption: `如果心動有最短路徑
+大概就是妳的笑容`,
+        done: `下一段回憶　→`,
+        hint: `輕觸照片，讀取我眼中的妳`,
+        memories: [
+          ['IMG_0015.webp', `我喜歡妳笑得甜甜的樣子。`],
+          ['IMG_0016.webp', `我也喜歡妳故意搞怪的樣子
+只有很放鬆的時候妳才會這麼可愛`],
+          ['IMG_0025.webp', `每次妳認真看著鏡頭
+我都會忍不住 把那幾秒多看一會`],
+          ['IMG_0019.webp', `這樣很日常的妳
+反而最貼近我心裡的樣子`],
+          ['IMG_0023.webp', `妳覺得只是隨手一拍
+但我總會想把這樣的瞬間多留久點`],
+          ['IMG_0162.webp', `妳很漂亮
+我喜歡妳的原因 不只因為漂亮`],
+          ['IMG_0091.webp', `妳一出現在畫面裡
+我的視線就會自動完成對焦`],
+          ['IMG_7540.webp', `比起所有好看的樣子
+我更喜歡那些只在我面前出現的妳`]
+        ]
+      },
+
+      graduation: {
+        kicker: `THE DAY I GRADUATED`,
+        title: `重要的終點
+始終有你`,
+        done: `前往人生下一階段　→`,
+        hint: `輕觸空白處，放入下一張照片`,
+        memories: [
+          ['IMG_9179.webp', `那天站在大學的終點，我第一個想分享的人，還是妳`, '-6deg'],
+          ['IMG_9197.webp', `畢業證書上只有我的名字，但這段路是妳陪我一起走過的`, '5deg'],
+          ['IMG_0247(1).webp', `以後每一個重要階段，我都希望照片裡有妳，人生裡也有妳`, '-1deg']
+        ]
+      },
+
+      military: {
+        kicker: `THE DAYS WE MADE IT THROUGH`,
+        next: `看看她留了什麼　→`,
+        done: `把妳的陪伴收好　→`,
+        hint: `繼續走進下一段日子`,
+        envelopeHint: `她好像留了什麼給你，點開看看`,
+        envelope: `OPEN ONE LETTER`,
+        ending: `我撐過了新訓
+但真正讓我撐過去的原因 是妳`,
+        memories: [
+          ['IMG_9998.webp', `BEFORE ENLISTMENT`, `進去前一天，是妳親手幫我把頭髮剃掉 
+那時候我裝得沒什麼，其實心裡最捨不得的就是妳`],
+          ['IMG_9978(1).webp', `SIGNAL FOUND · FAMILY DAY`, `懇親會看到妳走過來的那一刻 我才知道
+只是見到喜歡的人，就能把累積很久的辛苦全部沖淡`],
+          ['IMG_0035(1).webp', `DAILY LETTERS`, `妳寫的不是幾張卡片
+是把我每天需要的勇氣，不管悲傷快樂先替我準備好了`]
+        ]
+      },
+
+      fun: {
+        kicker: `HER UNEXPECTED PARAMETERS`,
+        title: `妳讓生活
+一直很好玩`,
+        done: `分析完成　→`,
+        hint: `點開散落的照片`,
+        items: [
+          ['IMG_7957.webp', `CASE 01 · 妳連殺夫照都可以拍得很有戲`],
+          ['61F268FF-C523-4600-AFE8-4350182BAEAF.webp', `CASE 02 · 這樣只好幫妳換上囚服`],
+          ['IMG_9996.webp', `E+ ENERGY · 很多人看著也敢玩得超開心`],
+          ['IMG_9993.webp', `LUCK ERROR · 沒抽到喜歡的，但表情成了限定款`],
+          ['IMG_9930.webp', `CUTE COMPONENT · 只有羊小寶可以捏的肉`],
+          ['IMG_9990.webp', `FOOD TEST · 鱷魚肉的味道會忘，妳的表情不會`]
+        ]
+      },
+
+      daily: {
+        kicker: `ORDINARY DAYS / FAVORITE MEMORIES`,
+        title: `日子很普通
+因為有妳才值得收藏`,
+        done: `收好這卷底片　→`,
+        items: [
+          ['IMG_0049.webp', `和妳坐在一起的普通時刻`],
+          ['490EF4BC-A8FA-4EB9-A6AF-092F4AD59F35.webp', `照片很暗，但我的頭是亮的`],
+          ['IMG_0064.webp', `一起做奇怪的事，拍奇怪的照片`],
+          ['IMG_0065.webp', `鏡子裡的兩個人，是我想一直看下去的畫面`],
+          ['dji_fly_20260829_141850_0009_1787984654498_photo.webp', `妳每一次靠過來，都讓我覺得自己被需要`],
+          ['IMG_0250.webp', `我們站在一起時，很自然就像同一隊`],
+          ['IMG_9989.webp', `妳拖著行李來台中，是我被妳奔赴的證明`],
+          ['IMG_0251.webp', `每一次妳來見我，都讓距離變得沒有那麼可怕`],
+          ['D859B690-D6EA-4438-9012-16E73C66FEE2.webp', `0613，想把妳喜歡的東西和我的心意一起送給妳`],
+          ['IMG_6532(1).webp', `新的一年開始時，身邊還是妳`],
+          ['IMG_6536(1).webp', `城市倒數，時間往前，而我們還在一起`],
+          ['IMG_6565.webp', `煙火結束後，妳靠在我身上的重量最值得記住`]
+        ]
+      },
+
+      tech: {
+        kicker: `PLAYER TWO / CONNECTION TEST`,
+        title: `我的科技小宇宙
+一直有妳`,
+        done: `儲存這段時間　→`,
+        hint: `輕觸核心，讀取下一筆記憶`,
+        items: [
+          ['IMG_5678.webp', `我一直以為，我喜歡的是研究新東西`],
+          ['IMG_9991.webp', `後來才發現，我更喜歡的是第一個拿去跟妳分享`],
+          ['IMG_9997.webp', `每一個我感興趣的世界，妳都願意走進來看看`],
+          ['IMG_9995.webp', `我的魔術不一定完美，但妳願意看，我就想一直製造驚喜`],
+          ['IMG_8763.webp', `機械錶需要校正；但遇見妳，是我人生裡最準確的一次`]
+        ]
+      },
+
+      bugu: {
+        kicker: `ONE SMALL STAR`,
+        title: `有一個名字
+我們一起想念`,
+        hint: `點亮這顆小星星`,
+        text: `牠陪我們走過一小段路，也讓「我們」這兩個字，多了一個共同想念的名字
+
+謝謝妳和我一起愛過牠
+因為是我們一起記得，所以牠從來沒有真的消失
+
+我親愛的布勾，雖然你已經不在了，但我跟NUO
+會記著你繼續走下去`,
+        done: `把這顆星星留在這裡　→`
+      },
+
+      distance: {
+        kicker: `TAIWAN / AUSTRALIA`,
+        title: `明年 距離會變遠
+但我們不會`,
+        left: `TAIWAN`,
+        right: `AUSTRALIA`,
+        paragraphs: [
+          `我們之間很快會多一段距離、一些時差，也會多很多想見妳、想抱妳、想親妳，卻只能隔著螢幕說想妳的時候`,
+          `我知道遠距離從來都不會只有浪漫，可能會有想念、委屈、不安，也會有彼此都很累，卻還是沒辦法出現在對方身邊的時候`,
+          `但如果這段距離的另一端是妳，我願意和妳一起慢慢學會，怎麼把想念變成等待，把不安變成相信，把那些碰不到彼此的日子，也好好地一起走過去
+因為我真正害怕的，從來不是距離有多遠，而是某一天，我們忘了為什麼願意為彼此堅持，
+所以我想讓妳知道，我去澳洲，不是要走進一個沒有妳的未來
+我只是想先替我們走遠一點，去看看更大的世界，也讓自己變得更好一點`,
+         `也許這段路上，我不能每一次都牽得到妳的手，不能在妳難過的時候立刻抱住妳
+但我希望有一天回頭看，我們會發現，那些曾經以為很漫長的距離，只是我們故事裡的一小段路`,
+         `我會帶著對妳的想念往前走，也會一直記得，我努力走得更遠，不是為了離妳更遠
+而是希望有一天，能帶著更好的自己，走回妳身邊`,
+         `所以妳不用問我的終點在哪裡
+因為不管我走多遠，我希望最後都有妳`
+        ],
+        done: `讀取最後一封信　→`,
+        hint: `把左邊的訊號拖到澳洲，或直接點擊澳洲`
+      },
+
+      final: {
+        kicker: `FINAL OUTPUT / FOR 小寶`,
+        lines: [
+          `謝謝妳陪我走過實習、畢業、當兵，
+也陪我走過那些看起來很普通，現在回頭卻覺得特別珍貴的日子`,
+          `謝謝妳出現在我的生活裡，
+讓我第一次真的明白，原來被一個人放在心上、被堅定地選擇著，是這樣的感覺`,
+          `這一年，我們有開心、有爭執，有很多大大小小的事情
+有些照片我記得，有些對話可能已經忘了，
+但我一直記得，這些日子裡都有妳`,
+         `所以這從來不只是關於我們走到了第幾年，
+也不是日曆上又多了一個值得紀念的日期`
+        ],
+        answerTitle: `是我們又選擇了彼此一次
+也又一起，走過了一年`,
+        copy: `小寶，週年快樂
+
+謝謝妳成為我這一年裡，
+最熟悉、最依賴，也最捨不得失去的人
+
+未來會發生什麼，我現在還沒辦法全部算出來
+距離、時間、生活，都可能成為新的變數
+
+但有一個答案，我到現在還是很確定
+
+下一年的照片、下一年的故事，
+還有那些現在根本不知道會發生什麼的日子，
+我都還想繼續和妳一起製造。
+
+希望很多年以後，
+我們再打開的時候，會笑著覺得——
+原來那時候的我們，真的有很認真地愛著彼此`,
+        signature: `— 永遠想走向妳的羊小寶`,
+        continued: `NUO & YANG 0910 · STATUS: IN PROGRESS
+TO BE CONTINUED...`,
+        hint: `輕觸畫面，讀下一句`
+      },
+
+      chapters: {
+        kicker: `MEMORY INDEX`,
+        title: `想重看哪一段？`,
+        names: [`我眼中的妳`,`畢業`,`當兵`,`妳的反應`,`我們的日常`,`科技小宇宙`,`布勾`,`遠距離`,`給妳的信`]
+      }
+    };
+
+    // 統一文字寫入方式：會保留 TEXT 裡的換行，不使用 innerHTML。
+    function setText(selector,text){
+      const el=typeof selector==='string'?$(selector):selector;
+      if(!el)return;
+      el.textContent=text;
+      el.style.whiteSpace='pre-line';
+    }
+
+    function applyStaticText(){
+      setText('.lock-mark',TEXT.lock.mark);
+      setText('.lock-title',TEXT.lock.title);
+      setText('#lockError',TEXT.lock.hint);
+
+      setText('#prologue .kicker',TEXT.prologue.kicker);
+      setText('#prologue .display',TEXT.prologue.title);
+      setText('#prologue .copy',TEXT.prologue.copy);
+      setText('#begin',TEXT.prologue.begin);
+
+      setText('#herCaption',TEXT.her.initialCaption);
+      setText('#herDone',TEXT.her.done);
+      setText('#herHint',TEXT.her.hint);
+
+      const gradScene=$('[data-scene="graduation"]');
+      setText(gradScene?.querySelector('.kicker'),TEXT.graduation.kicker);
+      setText(gradScene?.querySelector('.display'),TEXT.graduation.title);
+      setText('#gradDone',TEXT.graduation.done);
+      setText('#gradHint',TEXT.graduation.hint);
+
+      const militaryScene=$('[data-scene="military"]');
+      setText(militaryScene?.querySelector('.scene-body > .kicker'),TEXT.military.kicker);
+      setText('#militaryNext',TEXT.military.next);
+      setText('#militaryDone',TEXT.military.done);
+      setText('#militaryHint',TEXT.military.hint);
+      setText('#envelope span',TEXT.military.envelope);
+
+      const funScene=$('[data-scene="fun"]');
+      setText(funScene?.querySelector('.kicker'),TEXT.fun.kicker);
+      setText(funScene?.querySelector('.display'),TEXT.fun.title);
+      setText('#funDone',TEXT.fun.done);
+      setText(funScene?.querySelector('.tap-hint'),TEXT.fun.hint);
+
+      const dailyScene=$('[data-scene="daily"]');
+      setText(dailyScene?.querySelector('.kicker'),TEXT.daily.kicker);
+      setText(dailyScene?.querySelector('.display'),TEXT.daily.title);
+      setText('#dailyDone',TEXT.daily.done);
+
+      const techScene=$('[data-scene="tech"]');
+      setText(techScene?.querySelector('.kicker'),TEXT.tech.kicker);
+      setText(techScene?.querySelector('.display'),TEXT.tech.title);
+      setText('#coreCaption',TEXT.tech.items[0][1]);
+      setText('#techDone',TEXT.tech.done);
+      setText('#coreHint',TEXT.tech.hint);
+
+      const buguScene=$('[data-scene="bugu"]');
+      setText('#starIntro .kicker',TEXT.bugu.kicker);
+      setText('#starIntro .display',TEXT.bugu.title);
+      setText('#starIntro .tap-hint',TEXT.bugu.hint);
+      setText('.bugu-text',TEXT.bugu.text);
+      setText('#buguDone',TEXT.bugu.done);
+
+      const distanceScene=$('[data-scene="distance"]');
+      setText(distanceScene?.querySelector('.kicker'),TEXT.distance.kicker);
+      setText(distanceScene?.querySelector('.display'),TEXT.distance.title);
+      setText('.place-row span',TEXT.distance.left);
+      setText('#connectTarget',TEXT.distance.right);
+      const distanceWords=$('#distanceWords'),distanceDone=$('#distanceDone');
+      distanceWords.querySelectorAll('p').forEach(p=>p.remove());
+      TEXT.distance.paragraphs.forEach(t=>{
+        const p=document.createElement('p');
+        setText(p,t);
+        distanceWords.insertBefore(p,distanceDone);
+      });
+      setText('#distanceDone',TEXT.distance.done);
+      setText('#distanceHint',TEXT.distance.hint);
+
+      const finalScene=$('[data-scene="final"]');
+      setText(finalScene?.querySelector('.final-words > .kicker'),TEXT.final.kicker);
+      const finalWords=$('#finalWords'),finalAnswer=$('#finalAnswer');
+      finalWords.querySelectorAll('.final-line').forEach(p=>p.remove());
+      TEXT.final.lines.forEach((t,i)=>{
+        const p=document.createElement('p');
+        p.className='final-line'+(i===0?' show':'');
+        setText(p,t);
+        finalWords.insertBefore(p,finalAnswer);
+      });
+      setText('#finalAnswer h2',TEXT.final.answerTitle);
+      setText('#finalAnswer .copy',TEXT.final.copy);
+      setText('#finalAnswer .signature',TEXT.final.signature);
+      setText('#finalAnswer .kicker',TEXT.final.continued);
+      setText('#finalHint',TEXT.final.hint);
+
+      setText('#chapters .chapter-list > .kicker',TEXT.chapters.kicker);
+      setText('#chapters .chapter-list > h2',TEXT.chapters.title);
+    }
+    applyStaticText();
+    const music=$('#music');music.volume=.64;let muted=false,code='';
+    function updateCode(){$$('.code-display i').forEach((d,i)=>{d.textContent=code[i]||'';d.classList.toggle('filled',!!code[i])})}
+    $$('[data-key]').forEach(b=>b.addEventListener('click',()=>{if(code.length>=4)return;code+=b.dataset.key;updateCode();if(code.length===4)setTimeout(checkCode,180)}));
+    function checkCode(){if(code==='0910'){$('#lock').style.opacity='0';$('#lock').style.transform='scale(1.04)';setTimeout(()=>{$('#lock').remove();$('#prologue').style.display='block';requestAnimationFrame(()=>$('#prologuePhoto').classList.add('focus'))},850)}else{setText('#lockError',TEXT.lock.wrong);code='';updateCode();$('.lock-inner').animate([{transform:'translateX(-7px)'},{transform:'translateX(7px)'},{transform:'translateX(0)'}],{duration:280})}}
+    const scenes=$$('.scene'),names=TEXT.chapters.names;let current=0,unlocked=0,moving=false;
+    names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=String(i+1).padStart(2,'0')+'  '+n;b.disabled=i>0;b.onclick=()=>{go(i);$('#chapters').style.display='none'};$('#chapterButtons').append(b)});
+    function setVolume(target,duration=700){const start=music.volume,steps=20,delta=(target-start)/steps;let n=0;const timer=setInterval(()=>{n++;music.volume=Math.max(0,Math.min(1,start+delta*n));if(n>=steps)clearInterval(timer)},duration/steps)}
+    function sceneMood(){setVolume(current===6?.3:.64);$('#back').hidden=current===0;$('#storyProgress').style.width=((current+1)/scenes.length*100)+'%';$$('#chapterButtons button').forEach((b,i)=>b.disabled=i>unlocked)}
+    function go(n){if(moving||n<0||n>=scenes.length||n>unlocked+1)return;moving=true;$('#wipe').classList.add('on');setTimeout(()=>{if(current===4&&reelTimer){clearInterval(reelTimer);reelTimer=null}if(current===8&&montageTimer){clearInterval(montageTimer);montageTimer=null}scenes[current]?.classList.remove('active');current=n;unlocked=Math.max(unlocked,n);scenes[current].classList.add('active');sceneMood();if(current===4)setTimeout(()=>{jumpToReel(0,false);if(!reelTimer)reelTimer=autoScrollReel()},420);if(current===8)startMontage()},390);setTimeout(()=>{$('#wipe').classList.remove('on');moving=false},820)}
+    $('#begin').onclick=async()=>{try{await music.play()}catch(e){}preloadMemoryImages();$('#prologue').style.opacity='0';setTimeout(()=>{$('#prologue').remove();$('#film').style.display='block';scenes[0].classList.add('active');sceneMood()},780)};
+    $('#back').onclick=()=>go(current-1);$('#sound').onclick=()=>{muted=!muted;music.muted=muted;$('#sound').textContent=muted?'×':'♫'};$('#corner').onclick=()=>$('#chapters').style.display='block';$('#chapterClose').onclick=()=>$('#chapters').style.display='none';
+
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+    async function smoothSwap(el,src,duration=720){
+      if(el.dataset.swapping==='1')return false;
+      el.dataset.swapping='1';
+      const preload=new Image();preload.src=src;
+      try{await preload.decode()}catch(e){}
+      const isBg=el.id==='herBg';
+      const parent=el.parentElement,style=getComputedStyle(el),ghost=el.cloneNode(false);
+      ghost.removeAttribute('id');ghost.removeAttribute('alt');
+      Object.assign(ghost.style,{position:'absolute',left:el.offsetLeft+'px',top:el.offsetTop+'px',width:el.offsetWidth+'px',height:el.offsetHeight+'px',margin:'0',zIndex:'5',pointerEvents:'none',objectFit:style.objectFit,objectPosition:style.objectPosition,transform:style.transform,animation:'none'});
+      parent.append(ghost);el.src=src;el.style.opacity='0';
+      const incoming=isBg
+        ?el.animate([{opacity:0,filter:'blur(24px) brightness(.35) saturate(.8)'},{opacity:1,filter:'blur(24px) brightness(.35) saturate(.8)'}],{duration,easing:'ease-out',fill:'forwards'})
+        :el.animate([{opacity:0,filter:'blur(3px)'},{opacity:1,filter:'blur(0)'}],{duration,easing:'ease-out',fill:'forwards'});
+      const outgoing=ghost.animate([{opacity:1},{opacity:0}],{duration,easing:'ease-in-out',fill:'forwards'});
+      await Promise.allSettled([incoming.finished,outgoing.finished]);
+      ghost.remove();incoming.cancel();el.style.opacity='1';delete el.dataset.swapping;return true;
+    }
+    async function changeCaption(el,text){const out=el.animate([{opacity:1},{opacity:0}],{duration:220,fill:'forwards'});await out.finished;setText(el,text);out.cancel();el.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:420,easing:'ease-out'});}
+    const her=TEXT.her.memories;let hi=0,herBusy=false;$('#portraitTap').onclick=async()=>{if(herBusy||hi>=her.length-1)return;herBusy=true;const next=hi+1,[img,text]=her[next],src='media/'+img;const swaps=Promise.all([smoothSwap($('#herPhoto'),src,760),smoothSwap($('#herBg'),src,900)]);await wait(210);changeCaption($('#herCaption'),text);await swaps;hi=next;herBusy=false;if(hi===her.length-1){$('#herHint').style.display='none';$('#herDone').classList.add('show')}};$('#herDone').onclick=e=>{e.stopPropagation();go(1)};
+
+    const grad=TEXT.graduation.memories;let gi=0;function addGrad(){if(gi>=grad.length)return;const [src,text,r]=grad[gi],p=document.createElement('div');p.className='polaroid';p.style.setProperty('--r',r);p.style.zIndex=gi+1;p.style.transform=`translate(-50%,-50%) rotate(${r}) translate(${(gi-1)*18}px,${gi*8}px)`;p.innerHTML=`<img src="media/${src}" alt="畢業回憶"><span>GRADUATION / MEMORY 0${gi+1}</span>`;$('#gradStage').prepend(p);setText('#gradLine',text);gi++;if(gi===grad.length){$('#gradHint').style.display='none';$('#gradDone').classList.add('show')}}$('#gradStage').onclick=addGrad;addGrad();$('#gradDone').onclick=e=>{e.stopPropagation();go(2)};
+
+    const military=TEXT.military.memories;let mi=0;function showMilitary(i){mi=i;$('#militaryImg').style.opacity=0;setTimeout(()=>{$('#militaryImg').src='media/'+military[i][0];setText('#militaryLabel',military[i][1]);setText('#militaryText',military[i][2]);$('#militaryImg').style.opacity=1},260);if(i===1){setTimeout(()=>$('#envelope').classList.add('show'),850);setText('#militaryHint',TEXT.military.envelopeHint);$('#militaryNext').style.display='none'}}$('#militaryNext').onclick=e=>{e.stopPropagation();$('#militaryNext').style.display='none';showMilitary(1)};$('#envelope').onclick=e=>{e.stopPropagation();$('#envelope').classList.remove('show');showMilitary(2);setTimeout(()=>{setText('#militaryText',TEXT.military.ending);$('#militaryHint').style.display='none';$('#militaryDone').classList.add('show')},850)};$('#militaryDone').onclick=()=>go(3);scenes[2].addEventListener('transitionend',e=>{if(e.target!==scenes[2])return;if(scenes[2].classList.contains('active')&&mi===0){setTimeout(()=>{$('#militaryNext').classList.add('military-next-show')},600)}});
+
+    const fun=TEXT.fun.items;const seen=new Set();fun.forEach((f,i)=>{const dot=document.createElement('i');$('#funProgress').append(dot);const b=document.createElement('button');b.className='float-photo';b.style.setProperty('--r',[-7,5,-3,6,-4,3][i]+'deg');b.style.setProperty('--d',i*.08+'s');b.innerHTML=`<img src="media/${f[0]}" alt="${f[1]}">`;b.onclick=e=>{e.stopPropagation();$$('.float-photo').forEach(x=>x.classList.remove('focus'));b.classList.add('focus');setText('#chaosCaption',f[1]);$('#chaosCaption').classList.add('show');seen.add(i);$$('#funProgress i').forEach((x,j)=>x.classList.toggle('seen',seen.has(j)));if(seen.size===fun.length)$('#funDone').classList.add('show')};$('#chaos').append(b)});$('#chaos').onclick=e=>{if(e.target.closest('#funDone'))return;$$('.float-photo').forEach(x=>x.classList.remove('focus'));$('#chaosCaption').classList.remove('show')};$('#funDone').onclick=e=>{e.stopPropagation();go(4)};
+
+    const reel=TEXT.daily.items;reel.forEach((f,i)=>{const el=document.createElement('figure'),img=document.createElement('img'),cap=document.createElement('figcaption');img.src='media/'+f[0];img.alt='我們的日常';setText(cap,f[1]);el.append(img,cap);$('#reel').append(el)});let reelFrame=0;function updateReelFocus(){cancelAnimationFrame(reelFrame);reelFrame=requestAnimationFrame(()=>{const center=innerWidth/2;let closest=null,distance=Infinity;$$('#reel figure').forEach(el=>{const r=el.getBoundingClientRect(),d=Math.abs(r.left+r.width/2-center);if(d<distance){distance=d;closest=el}});$$('#reel figure').forEach(el=>el.classList.toggle('current',el===closest))})}$('#reel').addEventListener('scroll',updateReelFocus,{passive:true});addEventListener('resize',updateReelFocus);requestAnimationFrame(updateReelFocus);
+function getReelItemWidth(){
+  const fig=$$('#reel figure')[0];
+  if(!fig)return 0;
+  const reelStyle=getComputedStyle($('#reel'));
+  const gap=parseFloat(reelStyle.columnGap||reelStyle.gap)||0;
+  return fig.getBoundingClientRect().width+gap;
+}
+function jumpToReel(idx,smooth){
+  const r=$('#reel'),figures=$$('#reel figure');
+  if(!figures.length)return;
+  const fig=figures[Math.max(0,Math.min(idx,figures.length-1))];
+  const targetLeft=fig.offsetLeft-(r.clientWidth-fig.offsetWidth)/2;
+  r.scrollTo({left:targetLeft,behavior:smooth?'smooth':'auto'});
+  setTimeout(updateReelFocus,50);
+}
+function autoScrollReel(){
+  const figures=$$('#reel figure');
+  let idx=0;
+  return setInterval(()=>{
+    idx=(idx+1)%figures.length;
+    jumpToReel(idx,true);
+  },2800);
+}
+let reelTimer=null,reelInited=false;
+scenes[4].addEventListener('transitionend',e=>{
+  if(e.target!==scenes[4])return;
+  if(scenes[4].classList.contains('active')&&!reelInited){
+    reelInited=true;
+    jumpToReel(0,false);
+    setTimeout(()=>{if(!reelTimer)reelTimer=autoScrollReel();},400);
+  }
+});
+$('#reel').addEventListener('pointerdown',()=>{clearInterval(reelTimer);reelTimer=null},{passive:true});
+$('#dailyDone').onclick=()=>go(5);
+
+    const tech=TEXT.tech.items;let ti=0,techBusy=false;function preloadMemoryImages(){[...her.slice(1),...tech.slice(1)].forEach(([src])=>{const image=new Image();image.src='media/'+src})}$('#core').onclick=async()=>{if(techBusy||ti>=tech.length-1)return;techBusy=true;const next=ti+1,[img,text]=tech[next];const swap=smoothSwap($('#corePhoto'),'media/'+img,760);await wait(210);changeCaption($('#coreCaption'),text);await swap;ti=next;techBusy=false;if(ti===tech.length-1){$('#coreHint').style.display='none';$('#techDone').classList.add('show')}};$('#techDone').onclick=()=>go(6);
+
+    $('#buguStar').onclick=()=>{$('#starIntro').style.opacity=0;setTimeout(()=>{$('#starIntro').style.display='none';$('#buguMemory').classList.add('show')},700)};$('#buguDone').onclick=()=>go(7);
+    let dragging=false,distanceConnected=false;const node=$('#dragNode'),connection=$('#connection'),fill=$('#connectFill'),distanceScene=$('[data-scene="distance"]');
+    function finishDistance(){
+      if(distanceConnected)return;
+      distanceConnected=true;dragging=false;
+      const r=connection.getBoundingClientRect(),max=r.width-44;
+      node.style.left=max+'px';fill.style.width='calc(100% - 18px)';
+      $('#distanceWords').classList.add('show');distanceScene.classList.add('reading');
+      $('#distanceHint').style.display='none';node.style.boxShadow='0 0 55px #e68ca0';
+      requestAnimationFrame(()=>distanceScene.querySelector('.scene-body').scrollTo({top:0,behavior:'auto'}));
+    }
+    function dragTo(x){const r=connection.getBoundingClientRect(),max=r.width-44,left=Math.max(0,Math.min(max,x-r.left-22));node.style.left=left+'px';fill.style.width=(left+22)+'px';if(left>max*.92)finishDistance()}
+    node.onpointerdown=e=>{dragging=true;node.setPointerCapture(e.pointerId)};node.onpointermove=e=>{if(dragging)dragTo(e.clientX)};node.onpointerup=()=>dragging=false;node.onpointercancel=()=>dragging=false;
+    node.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();finishDistance()}};
+    $('#connectTarget').onclick=finishDistance;$('#distanceDone').onclick=()=>go(8);
+
+    const montage=['IMG_0021.webp','IMG_0017.webp','IMG_9197.webp','IMG_9989.webp','IMG_8763.webp','IMG_6532(1).webp'];let montageI=0,finalI=1,montageTimer=null;
+    function startMontage(){if(montageTimer)return;montageTimer=setInterval(()=>{montageI=(montageI+1)%montage.length;$('#finalBg').style.opacity=.06;setTimeout(()=>{if(!scenes[8].classList.contains('active'))return;$('#finalBg').src='media/'+montage[montageI];$('#finalBg').style.opacity=.27},600)},4300)}
+    scenes[8].addEventListener('transitionend',()=>{if(scenes[8].classList.contains('active'))startMontage()});
+    scenes[8].onclick=e=>{if(e.target.closest('button'))return;const lines=$$('.final-line'),body=scenes[8].querySelector('.scene-body');scenes[8].classList.add('reading');if(finalI<lines.length){const line=lines[finalI++];line.classList.add('show');setTimeout(()=>line.scrollIntoView({behavior:'smooth',block:'center'}),80)}else if(!$('#finalAnswer').classList.contains('show')){$('#finalAnswer').classList.add('show');$('#finalHint').style.display='none';$('#finalBg').src='media/IMG_0021.webp';setTimeout(()=>body.scrollTo({top:body.scrollHeight,behavior:'smooth'}),120)}};
+    $('#heartComplete').onclick=e=>{e.stopPropagation();e.currentTarget.textContent='♥';e.currentTarget.animate([{transform:'scale(1)'},{transform:'scale(1.28)'},{transform:'scale(1)'}],{duration:700});setVolume(.74,1200)};
+  </script>
+</body>
+</html>
